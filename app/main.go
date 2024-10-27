@@ -16,9 +16,11 @@ func main() {
 
 	// service
 	authService := services.NewAuthService(dbCon)
+	todoService := services.NewTodoService(dbCon)
 
 	// controller
 	authController := controllers.NewAuthController(authService)
+	todoController := controllers.NewTodoController(todoService, authService)
 
 	// router
 	e := echo.New()
@@ -26,7 +28,9 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 	authRouter := routers.NewAuthRouter(authController)
+	todoRouter := routers.NewTodoRouter(todoController)
 	authRouter.SetRouting(e)
+	todoRouter.SetRouting(e)
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("SERVER_PORT")))
 }

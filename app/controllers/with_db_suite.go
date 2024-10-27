@@ -3,12 +3,11 @@ package controllers
 import (
 	"app/db"
 	"app/services"
+	"bytes"
 	"context"
 	"database/sql"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
-	"strings"
 
 	"github.com/DATA-DOG/go-txdb"
 	"github.com/labstack/echo/v4"
@@ -57,10 +56,8 @@ func (s *WithDBSuite) SignIn() {
 	authRecorder := httptest.NewRecorder()
 
 	// NOTE: リクエストの生成
-	f := make(url.Values)
-	f.Set("email", "test@example.com")
-	f.Set("password", "password")
-	req, _ := http.NewRequest(http.MethodPost, "/auth/sign_in", strings.NewReader(f.Encode()))
+	signUpRequestBody := bytes.NewBufferString("{\"name\":\"test name 1\",\"email\":\"test@example.com\",\"password\":\"password\"}")
+	req := httptest.NewRequest(http.MethodPost, "/auth/sign_up", signUpRequestBody)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	// echoによるWebサーバの設定
